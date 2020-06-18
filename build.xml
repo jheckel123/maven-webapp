@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="deploy" name="maven-webapp">
+	<property environment="env" />
+	<property name="app.name" value="maven-webapp" />
+	<property name="tomcat.home" value="${env.TOMCAT9_HOME}" />
+	<property name="tomcat.webapps" value="${tomcat.home}/webapps" />
+	<property name="deploy.home" value="${tomcat.webapps}/${app.name}" />
+	<echo message="AITS_HOME => ${env.AITS_HOME}" />
+	<echo message="TOMCAT9_HOME => ${env.TOMCAT9_HOME}" />
+	<echo message="Deployment Home Dir => ${deploy.home}" />
+	<echo message="OS => ${os.name}" />
+	<condition property="onLinux">
+		<equals arg1="${os.name}" arg2="Linux" />
+	</condition>
+	<echo message="onLinux => ${onLinux}" />
+	<target depends="clean" name="build">
+		<exec dir="." executable="mvn" failonerror="true">
+			<arg line="clean package" />
+		</exec>
+	</target>
+	<target depends="build" name="deploy">
+		<tstamp />
+		<mkdir dir="${deploy.home}" />
+		<copy todir="${deploy.home}">
+			<fileset dir="target/${app.name}">
+				<include name="**/*.*" />
+			</fileset>
+		</copy>
+		<delete>
+			<fileset dir="${deploy.home}/WEB-INF/lib" includes="aitsCommon-*.jar, ${app.name}-*.jar" />
+		</delete>
+	</target>
+	<target name="clean">
+		<delete dir="${deploy.home}" />
+		<delete dir="target" />
+	</target>
+</project>
