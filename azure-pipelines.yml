@@ -34,6 +34,10 @@ stages:
           echo Write your commands here
           echo Hello world test it
           export
+    - task: Ant@1
+      inputs:
+        buildFile: 'build.xml'
+        targets: replaceTokens
     - task: Maven@3
       inputs:
         mavenPomFile: 'pom.xml'

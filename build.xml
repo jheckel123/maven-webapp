@@ -34,4 +34,22 @@
 		<delete dir="${deploy.home}" />
 		<delete dir="target" />
 	</target>
+
+    <target name="replaceTokens">
+        <echo message="BUILD_BUILDID= ${env.BUILD_BUILDID}"/>
+        <echo message="BUILD_BUILDNUMBER= ${env.BUILD_BUILDNUMBER}"/>
+        <tstamp>
+            <format property="TODAY" pattern="MM-dd-yyyy HH:mm"/>
+        </tstamp>
+        <replace dir="src/main/webapp" token="$BUILD_BUILDID$" value="${env.BUILD_BUILDID}">
+            <include name="*.jsp"/>
+        </replace>
+        <replace dir="src/main/webapp" token="$BUILD_BUILDNUMBER$" value="${env.BUILD_BUILDNUMBER}">
+            <include name="*.jsp"/>
+        </replace>
+        <replace dir="src/main/webapp" token="$TODAY$" value="${TODAY}">
+            <include name="*.jsp"/>
+        </replace>
+    </target>
+
 </project>
