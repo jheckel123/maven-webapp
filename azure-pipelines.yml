@@ -45,6 +45,10 @@ stages:
         tags: |
           $(tag)
 
+    # this is needed so they are available during AKS deployment
+    - upload: manifests
+      artifact: manifests
+
 - stage: Deploy
   displayName: Deploy stage
   dependsOn: Build
