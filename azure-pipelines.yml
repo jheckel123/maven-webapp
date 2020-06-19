@@ -6,6 +6,19 @@
 trigger:
 - master
 
+variables:
+
+  # Container registry service connection established during pipeline creation
+  #dockerRegistryServiceConnection: '0006dad3-7e28-4bcf-8565-4315d61ad3be'
+  imageRepository: 'jheckel123mavenwebapp'
+  containerRegistry: 'heckelregistry.azurecr.io'
+  dockerfilePath: '**/Dockerfile'
+  tag: '$(Build.BuildId)'
+  imagePullSecret: 'heckelregistry-auth'
+
+  # Agent VM image name
+  vmImageName: 'ubuntu-latest'
+
 stages:
 - stage: Build
   displayName: Build stage
@@ -13,7 +26,7 @@ stages:
   - job: MavenDocker
     displayName: MavenDocker
     pool:
-      vmImage: 'ubuntu-latest'
+      vmImage: $(vmImageName)
     steps:
     - task: Maven@3
       inputs:
@@ -22,8 +35,6 @@ stages:
         javaHomeOption: 'JDKVersion'
         jdkVersionOption: '1.8'
         jdkArchitectureOption: 'x64'
-        publishJUnitResults: true
-        testResultsFiles: '**/surefire-reports/TEST-*.xml'
         goals: 'package'
     - task: Docker@2
       inputs:
@@ -31,4 +42,40 @@ stages:
         repository: 'jheckel123mavenwebapp'
         command: 'buildAndPush'
         Dockerfile: '**/Dockerfile'
+        tags: |
+          $(tag)
+
+- stage: Deploy
+  displayName: Deploy stage
+  dependsOn: Build
+
+  jobs:
+  - deployment: Deploy
+    displayName: Deploy
+    pool:
+      vmImage: $(vmImageName)
+    environment: 'Development'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: KubernetesManifest@0
+            inputs:
+              action: 'createSecret'
+              kubernetesServiceConnection: 'aitsAks'
+              namespace: 'default'
+              secretType: 'dockerRegistry'
+              secretName: 'heckelregistry-auth'
+              dockerRegistryEndpoint: 'heckelRegistry'
+          - task: KubernetesManifest@0
+            displayName: Deploy to Kubernetes cluster
+            inputs:
+              action: deploy
+              manifests: |
+                $(Pipeline.Workspace)/manifests/deployment.yml
+                $(Pipeline.Workspace)/manifests/service.yml
+              imagePullSecrets: |
+                'heckelregistry-auth'
+              containers: |
+                $(containerRegistry)/$(imageRepository):$(tag)
 
