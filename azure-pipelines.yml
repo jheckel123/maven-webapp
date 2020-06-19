@@ -10,8 +10,8 @@ stages:
 - stage: Build
   displayName: Build stage
   jobs:  
-  - job: Maven & Docker
-    displayName: Maven & Docker
+  - job: Maven and Docker
+    displayName: Maven and Docker
     pool:
       vmImage: 'ubuntu-latest'
     steps:
