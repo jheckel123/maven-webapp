@@ -28,6 +28,12 @@ stages:
     pool:
       vmImage: $(vmImageName)
     steps:
+    - task: CmdLine@2
+      inputs:
+        script: |
+          echo Write your commands here
+          echo Hello world test it
+          export
     - task: Maven@3
       inputs:
         mavenPomFile: 'pom.xml'
