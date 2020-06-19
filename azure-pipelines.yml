@@ -65,17 +65,18 @@ stages:
               kubernetesServiceConnection: 'aitsAks'
               namespace: 'default'
               secretType: 'dockerRegistry'
-              secretName: 'heckelregistry-auth'
+              secretName: $(imagePullSecret)
               dockerRegistryEndpoint: 'heckelRegistry'
           - task: KubernetesManifest@0
             displayName: Deploy to Kubernetes cluster
             inputs:
               action: deploy
+              kubernetesServiceConnection: 'aitsAks'
               manifests: |
                 $(Pipeline.Workspace)/manifests/deployment.yml
                 $(Pipeline.Workspace)/manifests/service.yml
               imagePullSecrets: |
-                'heckelregistry-auth'
+                $(imagePullSecret)
               containers: |
                 $(containerRegistry)/$(imageRepository):$(tag)
 
