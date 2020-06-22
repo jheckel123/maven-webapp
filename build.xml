@@ -39,7 +39,6 @@
         <echo message="BUILD_BUILDID= ${env.BUILD_BUILDID}"/>
         <echo message="BUILD_BUILDNUMBER= ${env.BUILD_BUILDNUMBER}"/>
         <echo message="DEPLOYCOLOR= ${env.DEPLOYCOLOR}"/>
-        <echo message="DEPLOY_COLOR= ${env.DEPLOY_COLOR}"/>
         <tstamp>
             <format property="TODAY" pattern="MM-dd-yyyy HH:mm"/>
         </tstamp>
@@ -52,7 +51,7 @@
         <replace dir="src/main/webapp" token="$BUILD_BUILDNUMBER$" value="${env.BUILD_BUILDNUMBER}">
             <include name="*.jsp"/>
         </replace>
-        <replace dir="src/main/webapp" token="$DEPLOY_COLOR$" value="${env.DEPLOY_COLOR}">
+        <replace dir="src/main/webapp" token="$DEPLOYCOLOR$" value="${env.DEPLOYCOLOR}">
             <include name="*.jsp"/>
         </replace>
     </target>
