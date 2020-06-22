@@ -1,4 +1,4 @@
-# deploy to test
+# deploy specific image tag to test
 
 parameters:
 - name: IMAGE_TAG
@@ -16,16 +16,11 @@ trigger: none
 #      - azure-pipelines-deploy2.yml
 
 variables:
-
-  # Container registry service connection established during pipeline creation
-  #dockerRegistryServiceConnection: '0006dad3-7e28-4bcf-8565-4315d61ad3be'
-  imageRepository: 'jheckel123mavenwebapp'
-  containerRegistry: 'heckelregistry.azurecr.io'
-  tag: ${{ parameters.IMAGE_TAG }}
-  imagePullSecret: 'heckelregistry-auth'
-
-  # Agent VM image name
   vmImageName: 'ubuntu-latest'
+  tag: ${{ parameters.IMAGE_TAG }}
+  containerRegistry: 'heckelregistry.azurecr.io'
+  imageRepository: 'jheckel123mavenwebapp'
+  imagePullSecret: 'heckelregistry-auth'
 
 stages:
 - stage: Build
@@ -39,4 +34,40 @@ stages:
     # this is needed so they are available during AKS deployment
     - upload: manifests
       artifact: manifests
+
+- stage: Deploy
+  displayName: Deploy stage
+  dependsOn: Build
+
+  jobs:
+  - deployment: Deploy
+    displayName: Deploy
+    pool:
+      vmImage: $(vmImageName)
+    environment: 'Test'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: KubernetesManifest@0
+            inputs:
+              action: 'createSecret'
+              kubernetesServiceConnection: 'aitsAks'
+              namespace: 'test'
+              secretType: 'dockerRegistry'
+              secretName: $(imagePullSecret)
+              dockerRegistryEndpoint: 'heckelRegistry'
+          - task: KubernetesManifest@0
+            displayName: Deploy to Kubernetes cluster
+            inputs:
+              action: deploy
+              kubernetesServiceConnection: 'aitsAks'
+              namespace: 'test'
+              manifests: |
+                $(Pipeline.Workspace)/manifests/deployment.yml
+                $(Pipeline.Workspace)/manifests/service.yml
+              imagePullSecrets: |
+                $(imagePullSecret)
+              containers: |
+                $(containerRegistry)/$(imageRepository):$(tag)
 
