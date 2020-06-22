@@ -1,0 +1,45 @@
+# deploy to test
+
+parameters:
+- name: IMAGE_TAG
+  displayName: IMAGE_TAG
+  type: string
+
+trigger: none
+#trigger:
+#  branches:
+#    include:
+#      - master
+#  paths:
+#    exclude:
+#      - azure-pipelines.yml
+#      - azure-pipelines-deploy2.yml
+
+variables:
+
+  # Container registry service connection established during pipeline creation
+  #dockerRegistryServiceConnection: '0006dad3-7e28-4bcf-8565-4315d61ad3be'
+  imageRepository: 'jheckel123mavenwebapp'
+  containerRegistry: 'heckelregistry.azurecr.io'
+  dockerfilePath: '**/Dockerfile'
+  tag: '$(Build.BuildId)'
+  imagePullSecret: 'heckelregistry-auth'
+
+  # Agent VM image name
+  vmImageName: 'ubuntu-latest'
+
+  deployColor: ${{ parameters.DEPLOY_COLOR }}
+
+stages:
+- stage: Build
+  displayName: Build stage
+  jobs:  
+  - job: Publish
+    displayName: Publish Manifests
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    # this is needed so they are available during AKS deployment
+    - upload: manifests
+      artifact: manifests
+
