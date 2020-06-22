@@ -38,7 +38,7 @@
     <target name="replaceTokens">
         <echo message="BUILD_BUILDID= ${env.BUILD_BUILDID}"/>
         <echo message="BUILD_BUILDNUMBER= ${env.BUILD_BUILDNUMBER}"/>
-        <echo message="deployColor= ${env.deployColor}"/>
+        <echo message="DEPLOYCOLOR= ${env.DEPLOYCOLOR}"/>
         <echo message="DEPLOY_COLOR= ${env.DEPLOY_COLOR}"/>
         <tstamp>
             <format property="TODAY" pattern="MM-dd-yyyy HH:mm"/>
