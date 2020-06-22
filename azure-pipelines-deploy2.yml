@@ -1,16 +1,19 @@
-# Maven
-# Build your Java project and run tests with Apache Maven.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/java
+# deploy to test
 
-trigger:
-  branches:
-    include:
-      - master
-  paths:
-    exclude:
-      - azure-pipelines.yml
-      - azure-pipelines-deploy2.yml
+parameters:
+- name: DEPLOY_COLOR
+  displayName: DEPLOY_COLOR
+  type: string
+
+trigger: none
+#trigger:
+#  branches:
+#    include:
+#      - master
+#  paths:
+#    exclude:
+#      - azure-pipelines.yml
+#      - azure-pipelines-deploy2.yml
 
 variables:
 
@@ -24,6 +27,8 @@ variables:
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
+
+  deployColor: ${{ parameters.DEPLOY_COLOR }}
 
 stages:
 - stage: Build
@@ -83,7 +88,7 @@ stages:
             inputs:
               action: 'createSecret'
               kubernetesServiceConnection: 'aitsAks'
-              namespace: 'default'
+              namespace: 'test'
               secretType: 'dockerRegistry'
               secretName: $(imagePullSecret)
               dockerRegistryEndpoint: 'heckelRegistry'
@@ -92,6 +97,7 @@ stages:
             inputs:
               action: deploy
               kubernetesServiceConnection: 'aitsAks'
+              namespace: 'test'
               manifests: |
                 $(Pipeline.Workspace)/manifests/deployment.yml
                 $(Pipeline.Workspace)/manifests/service.yml

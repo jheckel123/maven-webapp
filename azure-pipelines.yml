@@ -6,6 +6,7 @@ parameters:
   type: string
 
 trigger: none
+#trigger:
 #  branches:
 #    include:
 #      - master
@@ -87,7 +88,7 @@ stages:
             inputs:
               action: 'createSecret'
               kubernetesServiceConnection: 'aitsAks'
-              namespace: 'default'
+              namespace: 'development'
               secretType: 'dockerRegistry'
               secretName: $(imagePullSecret)
               dockerRegistryEndpoint: 'heckelRegistry'
@@ -96,6 +97,7 @@ stages:
             inputs:
               action: deploy
               kubernetesServiceConnection: 'aitsAks'
+              namespace: 'development'
               manifests: |
                 $(Pipeline.Workspace)/manifests/deployment.yml
                 $(Pipeline.Workspace)/manifests/service.yml
