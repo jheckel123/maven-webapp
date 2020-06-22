@@ -10,9 +10,8 @@ trigger:
     include:
       - master
   paths:
-    exclude: |
-      azure-pipelines.yml
-      azure-pipelines-deploy2.yml
+    exclude:
+      - azure-pipelines*.yml
 
 variables:
 
