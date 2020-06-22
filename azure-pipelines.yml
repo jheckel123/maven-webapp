@@ -11,7 +11,8 @@ trigger:
       - master
   paths:
     exclude:
-      - azure-pipelines*.yml
+      - azure-pipelines.yml
+      - azure-pipelines-deploy2.yml
 
 variables:
 
@@ -25,6 +26,8 @@ variables:
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
+
+  deployColor: ${{ parameters.DEPLOY_COLOR }}
 
 stages:
 - stage: Build
