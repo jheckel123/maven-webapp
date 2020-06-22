@@ -21,14 +21,11 @@ variables:
   #dockerRegistryServiceConnection: '0006dad3-7e28-4bcf-8565-4315d61ad3be'
   imageRepository: 'jheckel123mavenwebapp'
   containerRegistry: 'heckelregistry.azurecr.io'
-  dockerfilePath: '**/Dockerfile'
-  tag: '$(Build.BuildId)'
+  tag: ${{ parameters.IMAGE_TAG }}
   imagePullSecret: 'heckelregistry-auth'
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
-
-  deployColor: ${{ parameters.DEPLOY_COLOR }}
 
 stages:
 - stage: Build
