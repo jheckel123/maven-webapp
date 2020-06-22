@@ -5,14 +5,14 @@ parameters:
   displayName: DEPLOY_COLOR
   type: string
 
-trigger:
-  branches:
-    include:
-      - master
-  paths:
-    exclude:
-      - azure-pipelines.yml
-      - azure-pipelines-deploy2.yml
+trigger: none
+#  branches:
+#    include:
+#      - master
+#  paths:
+#    exclude:
+#      - azure-pipelines.yml
+#      - azure-pipelines-deploy2.yml
 
 variables:
 
