@@ -47,6 +47,8 @@ public class App {
     String localPath = "/home/jheckel/Dropbox/AzureDevops/maven-webapp/";
     String downloadFileName = fileName.replace(".txt", "DOWNLOAD.txt");
     File downloadedFile = new File(localPath + downloadFileName);
+    if (downloadedFile.exists())
+      downloadedFile.delete();
     System.out.println("\nDownloading blob to\n\t " + localPath + downloadFileName);
     BlobClient blobClient = containerClient.getBlobClient(fileName);
     System.out.println("blobClient ==>> " + blobClient);
